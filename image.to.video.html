@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="description" content="Convert images to high-quality videos online. Add transitions, background music, and customize duration. Free, fast, and fully responsive.">
+  <meta name="keywords" content="image to video, video creator, slideshow maker, image converter, video tool">
+  <meta name="author" content="VideoForge">
+  <meta name="theme-color" content="#1e1a2f">
+  <title>Image to Video Converter | Create Stunning Slideshows</title>
+  <!-- Structured Data for Web Application -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Image to Video Converter",
+      "description": "Convert multiple images into a professional video with transitions, background music, and adjustable quality.",
+      "applicationCategory": "Multimedia",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fe 0%, #e9eef5 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .header h1 {
+      font-size: 2.2rem;
+      background: linear-gradient(135deg, #1e2b6e, #2c3e8f);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+    .header p {
+      color: #4a5568;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    /* Main Grid */
+    .tool-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+    }
+    .upload-panel {
+      flex: 2;
+      min-width: 260px;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(2px);
+      border-radius: 32px;
+      padding: 24px;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .settings-panel {
+      flex: 1.5;
+      min-width: 280px;
+      background: white;
+      border-radius: 32px;
+      padding: 24px;
+      box-shadow: 0 20px 35px -10px rgba(0,0,0,0.08);
+    }
+
+    /* Drag & Drop */
+    .dropzone {
+      border: 2px dashed #9bb3e0;
+      border-radius: 28px;
+      padding: 32px 20px;
+      text-align: center;
+      background: #f8faff;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .dropzone.active {
+      border-color: #3b5bdb;
+      background: #eef3ff;
+    }
+    .dropzone i { font-size: 40px; color: #3b5bdb; margin-bottom: 12px; display: inline-block; }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+      max-height: 340px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .preview-card {
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      position: relative;
+      border: 1px solid #e2e8f0;
+    }
+    .preview-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+    }
+    .remove-img {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(0,0,0,0.65);
+      color: white;
+      border-radius: 40px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      backdrop-filter: blur(2px);
+    }
+    /* controls */
+    .control-group {
+      margin-bottom: 22px;
+    }
+    label {
+      font-weight: 600;
+      color: #1f2937;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 60px;
+      border: 1px solid #cfdfed;
+      background: white;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+    button {
+      background: #1f2b4e;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      margin-top: 8px;
+    }
+    button:active { transform: scale(0.97); }
+    .btn-secondary {
+      background: #4a5b8c;
+    }
+    .progress-wrap {
+      margin: 20px 0;
+    }
+    progress {
+      width: 100%;
+      height: 10px;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .download-btn {
+      background: #0f7b3a;
+      margin-top: 12px;
+    }
+    .ad-section {
+      margin-top: 35px;
+      padding: 18px;
+      background: #f1f4f9;
+      border-radius: 24px;
+      text-align: center;
+      border: 1px solid #dce3ec;
+    }
+    .ad-placeholder {
+      min-height: 100px;
+      background: #eef2f6;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: #5b6e8c;
+    }
+    .inline-flex {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    @media (max-width: 760px) {
+      body { padding: 12px; }
+      .upload-panel, .settings-panel { padding: 18px; }
+      .header h1 { font-size: 1.8rem; }
+    }
+    .quality-badge {
+      font-size: 12px;
+      background: #eef2ff;
+      border-radius: 60px;
+      padding: 4px 10px;
+      display: inline-block;
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 13px;
+      color: #6c757d;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>✨ Image to Video Studio</h1>
+    <p>Upload images, add music & transitions — generate high‑quality MP4 (WebM) in seconds</p>
+  </div>
+
+  <div class="tool-grid">
+    <!-- LEFT PANEL: Images & Preview -->
+    <div class="upload-panel">
+      <div class="dropzone" id="dropzone">
+        <div>📸</div>
+        <p>Drag & Drop images here or click to upload</p>
+        <small style="color:#6c86a5;">JPG, PNG, WEBP (multiple)</small>
+        <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp" style="display:none">
+      </div>
+      <div class="preview-grid" id="previewGrid"></div>
+      <div class="control-group" style="margin-top: 12px;">
+        <button type="button" id="clearAllBtn" class="btn-secondary" style="background:#8b5a2b;">🗑 Clear all images</button>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Settings & Controls -->
+    <div class="settings-panel">
+      <div class="control-group">
+        <label>⏱️ Video Duration (seconds)</label>
+        <input type="number" id="durationInput" min="2" max="60" step="0.5" value="5">
+      </div>
+      <div class="control-group">
+        <label>✨ Transition Effect</label>
+        <select id="transitionSelect">
+          <option value="fade">Fade (smooth crossfade)</option>
+          <option value="none">None (hard cut)</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>🎵 Background Music (optional)</label>
+        <input type="file" id="audioUpload" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp3">
+        <small style="display:block; margin-top:5px;">MP3, WAV, OGG — loops to match duration</small>
+      </div>
+      <div class="control-group">
+        <label>📹 Video Quality (Resolution)</label>
+        <select id="qualitySelect">
+          <option value="low">Low (640x360)</option>
+          <option value="medium" selected>Medium (1280x720) HD</option>
+          <option value="high">High (1920x1080) FHD</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <button id="convertBtn">🎬 Generate Video</button>
+        <div class="progress-wrap" id="progressWrap" style="display:none;">
+          <progress id="progressBar" value="0" max="100"></progress>
+          <p id="progressText" style="font-size:13px; margin-top:6px;">0%</p>
+        </div>
+        <button id="downloadBtn" class="download-btn" disabled>⬇️ Download Video</button>
+      </div>
+      
+      <!-- AD SECTION with easy AdSense ID insertion -->
+      <div class="ad-section">
+        <label>📢 Monetization (Ad Unit ID)</label>
+        <input type="text" id="adSlotId" placeholder="Enter AdSense ad-slot (e.g., 1234567890)" value="">
+        <input type="text" id="adClientId" placeholder="AdSense publisher ID (ca-pub-XXXXXXXX)" style="margin-top:6px;">
+        <div id="adContainer" class="ad-placeholder" style="margin-top:12px;">
+          🔹 Advertisement Space 🔹<br> <span id="adHint">Insert Ad Unit ID to display</span>
+        </div>
+        <small>Paste your AdSense code IDs above → ads will appear dynamically.</small>
+      </div>
+    </div>
+  </div>
+  <footer>🎥 Convert images to video instantly • All processing in your browser • No uploads, your privacy is safe</footer>
+</div>
+
+<script>
+  // ---------- GLOBAL STATE ----------
+  let imageFiles = [];        // store original File objects
+  let imageElements = [];     // loaded HTMLImageElement[]
+  let audioBuffer = null;     // decoded audio buffer
+  let audioContext = null;
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let animationId = null;
+  let recordingActive = false;
+  let canvas = null;
+  let stream = null;
+  let canvasStream = null;
+  let combinedStream = null;
+  let audioSourceNode = null;
+  let mediaStreamDestination = null;
+  let totalDurationSec = 5;
+  let transitionType = 'fade';
+  let qualityMap = { low: { w: 640, h: 360 }, medium: { w: 1280, h: 720 }, high: { w: 1920, h: 1080 } };
+  let selectedQuality = 'medium';
+  let currentVideoBlob = null;
+
+  // DOM elements
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const previewGrid = document.getElementById('previewGrid');
+  const durationInput = document.getElementById('durationInput');
+  const transitionSelect = document.getElementById('transitionSelect');
+  const audioUpload = document.getElementById('audioUpload');
+  const qualitySelect = document.getElementById('qualitySelect');
+  const convertBtn = document.getElementById('convertBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const clearAllBtn = document.getElementById('clearAllBtn');
+
+  // Ad section 
+  const adSlotId = document.getElementById('adSlotId');
+  const adClientId = document.getElementById('adClientId');
+  const adContainer = document.getElementById('adContainer');
+  function loadAdsense() {
+    const slot = adSlotId.value.trim();
+    const client = adClientId.value.trim();
+    if (slot && client) {
+      adContainer.innerHTML = '';
+      const adScript = document.createElement('script');
+      adScript.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
+      adScript.async = true;
+      adScript.crossOrigin = "anonymous";
+      const insElem = document.createElement('ins');
+      insElem.className = 'adsbygoogle';
+      insElem.style.display = 'block';
+      insElem.setAttribute('data-ad-client', client);
+      insElem.setAttribute('data-ad-slot', slot);
+      insElem.setAttribute('data-ad-format', 'auto');
+      insElem.setAttribute('data-full-width-responsive', 'true');
+      adContainer.appendChild(adScript);
+      adContainer.appendChild(insElem);
+      try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) { console.warn(e); }
+      adContainer.style.minHeight = 'auto';
+    } else {
+      adContainer.innerHTML = '<div class="ad-placeholder">📢 Advertisement — Enter Ad Unit ID to enable monetization</div>';
+    }
+  }
+  adSlotId.addEventListener('input', loadAdsense);
+  adClientId.addEventListener('input', loadAdsense);
+
+  // Helper: refresh previews
+  function renderPreviews() {
+    previewGrid.innerHTML = '';
+    imageFiles.forEach((file, idx) => {
+      const url = URL.createObjectURL(file);
+      const card = document.createElement('div');
+      card.className = 'preview-card';
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = `preview ${idx}`;
+      const removeBtn = document.createElement('div');
+      removeBtn.className = 'remove-img';
+      removeBtn.innerHTML = '✕';
+      removeBtn.onclick = (e) => {
+        e.stopPropagation();
+        removeImage(idx);
+      };
+      card.appendChild(img);
+      card.appendChild(removeBtn);
+      previewGrid.appendChild(card);
+      URL.revokeObjectURL(url); // revoke after src set? Actually keep until removal, we reload each time. We revoke later in remove
+    });
+    // reload image elements after file list changed (for canvas)
+    loadImagesFromFiles();
+  }
+
+  async function loadImagesFromFiles() {
+    const promises = imageFiles.map(file => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = URL.createObjectURL(file);
+      });
+    });
+    const imgs = await Promise.all(promises);
+    imageElements = imgs.filter(img => img !== null);
+    if (imageElements.length !== imageFiles.length) console.warn("Some images failed to load");
+  }
+
+  function removeImage(index) {
+    imageFiles.splice(index, 1);
+    renderPreviews();
+  }
+
+  function clearAllImages() {
+    imageFiles = [];
+    imageElements = [];
+    renderPreviews();
+  }
+
+  // handle file addition
+  function addFiles(files) {
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    const newFiles = Array.from(files).filter(f => allowed.includes(f.type));
+    if (newFiles.length === 0) return;
+    imageFiles.push(...newFiles);
+    renderPreviews();
+  }
+
+  // Drag & Drop logic
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => addFiles(e.target.files));
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('active'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('active'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('active');
+    const items = e.dataTransfer.files;
+    addFiles(items);
+  });
+  clearAllBtn.addEventListener('click', clearAllImages);
+
+  // Video Generation Engine (Canvas + MediaRecorder + Audio)
+  async function generateVideo() {
+    if (imageElements.length === 0) { alert("Please upload at least one image."); return; }
+    if (recordingActive) return;
+    totalDurationSec = parseFloat(durationInput.value);
+    if (isNaN(totalDurationSec) || totalDurationSec < 1) totalDurationSec = 2;
+    transitionType = transitionSelect.value;
+    selectedQuality = qualitySelect.value;
+    const { w, h } = qualityMap[selectedQuality];
+    
+    // Setup canvas
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+    }
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    
+    // preload images fully (already imageElements)
+    const images = imageElements;
+    const N = images.length;
+    if (N === 0) return;
+    const TRANSITION_DUR = (transitionType === 'fade') ? 0.5 : 0;
+    let effectiveTotal = totalDurationSec;
+    let imageHoldDuration = 0;
+    let transitionDurationActual = (transitionType === 'fade' && N > 1) ? TRANSITION_DUR : 0;
+    if (transitionDurationActual > 0 && effectiveTotal > (N-1)*transitionDurationActual) {
+      imageHoldDuration = (effectiveTotal - (N-1)*transitionDurationActual) / N;
+    } else {
+      imageHoldDuration = effectiveTotal / N;
+      transitionDurationActual = 0;
+    }
+    if (imageHoldDuration < 0.1) imageHoldDuration = 0.5;
+    // timeline helper: get current image index and mix factor (0..1)
+    function getFrameParams(elapsed) {
+      if (elapsed >= effectiveTotal) return { idx: N-1, alpha: 1, nextIdx: null, mix: 0 };
+      if (transitionDurationActual === 0 || N === 1) {
+        let seg = effectiveTotal / N;
+        let idx = Math.min(Math.floor(elapsed / seg), N-1);
+        return { idx, alpha: 1, nextIdx: null, mix: 0 };
+      } else {
+        // Complex fade transition zones
+        let segmentLen = imageHoldDuration + transitionDurationActual;
+        let currentSegment = Math.floor(elapsed / segmentLen);
+        if (currentSegment >= N) currentSegment = N-1;
+        let segStart = currentSegment * segmentLen;
+        let segOffset = elapsed - segStart;
+        if (currentSegment === N-1 || segOffset <= imageHoldDuration) {
+          // within main image hold
+          return { idx: currentSegment, alpha: 1, nextIdx: null, mix: 0 };
+        } else {
+          // transition zone
+          let transOffset = segOffset - imageHoldDuration;
+          let mix = Math.min(1, transOffset / transitionDurationActual);
+          return { idx: currentSegment, nextIdx: currentSegment+1, mix: mix, alpha: 1 };
+        }
+      }
+    }
+
+    // Draw frame based on time
+    function drawFrame(timeSec) {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const params = getFrameParams(timeSec);
+      const img1 = images[params.idx];
+      if (img1) {
+        drawImageCover(ctx, img1, canvas.width, canvas.height);
+      }
+      if (params.nextIdx !== null && images[params.nextIdx] && params.mix > 0) {
+        // temporary fade overlay
+        ctx.globalAlpha = params.mix;
+        drawImageCover(ctx, images[params.nextIdx], canvas.width, canvas.height);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function drawImageCover(ctx, img, w, h) {
+      const imgAspect = img.width / img.height;
+      const canvasAspect = w / h;
+      let drawW, drawH, offsetX = 0, offsetY = 0;
+      if (imgAspect > canvasAspect) {
+        drawW = w;
+        drawH = w / imgAspect;
+        offsetY = (h - drawH) / 2;
+      } else {
+        drawH = h;
+        drawW = h * imgAspect;
+        offsetX = (w - drawW) / 2;
+      }
+      ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+    }
+
+    // Audio setup (optional)
+    let audioTrack = null;
+    let audioCtx = null;
+    let audioDest = null;
+    let soundSource = null;
+    if (audioUpload.files.length > 0) {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const arrayBuffer = await audioUpload.files[0].arrayBuffer();
+        const decoded = await audioCtx.decodeAudioData(arrayBuffer);
+        audioBuffer = decoded;
+        audioDest = audioCtx.createMediaStreamDestination();
+        soundSource = audioCtx.createBufferSource();
+        soundSource.buffer = audioBuffer;
+        soundSource.loop = true;
+        soundSource.connect(audioDest);
+        audioTrack = audioDest.stream.getAudioTracks()[0];
+      } catch(e) { console.warn("Audio error, proceeding without music:", e); audioTrack = null; }
+    }
+
+    // Video stream from canvas
+    canvasStream = canvas.captureStream(30);
+    const videoTrack = canvasStream.getVideoTracks()[0];
+    let finalStream;
+    if (audioTrack) {
+      finalStream = new MediaStream([videoTrack, audioTrack]);
+    } else {
+      finalStream = new MediaStream([videoTrack]);
+    }
+    combinedStream = finalStream;
+    mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm', videoBitsPerSecond: (selectedQuality === 'high'? 5000000: selectedQuality === 'medium'? 2500000: 1200000) });
+    recordedChunks = [];
+    mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
+    const finishPromise = new Promise((resolve) => {
+      mediaRecorder.onstop = () => {
+      
